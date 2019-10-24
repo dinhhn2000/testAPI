@@ -60,9 +60,11 @@ module.exports = (app) => {
             if (isMatch) {
               const payload = {
                 id: user._id,
-                name: user.userName
+                name: user.name
               };
-              jwt.sign(payload, secret, { expiresIn: 36000 },
+              console.log(payload);
+              
+              jwt.sign(payload, secret, { expiresIn: '1d' },
                 (err, token) => {
                   if (err) res.status(500)
                     .json({
