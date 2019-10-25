@@ -62,8 +62,7 @@ module.exports = (app) => {
                 id: user._id,
                 name: user.name
               };
-              console.log(payload);
-              
+              // console.log(payload);
               jwt.sign(payload, secret, { expiresIn: '1d' },
                 (err, token) => {
                   if (err) res.status(500)

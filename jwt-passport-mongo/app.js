@@ -6,9 +6,6 @@ const bodyParser = require('body-parser');
 const logger = require('morgan');
 const passport = require('passport');
 
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
-
 //reads in configuration from a .env file
 require('dotenv').config();
 require('./utils/db');
@@ -21,6 +18,7 @@ var app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
+app.use(passport.session());
 
 //CORS middleware
 const cors = require('cors');
@@ -36,7 +34,12 @@ app.use(logger('dev'));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+const indexRouter = require('./routes/index');
 app.use('/index', passport.authenticate('jwt', { session: false }), indexRouter);
+
+const profileRouter = require('./routes/profile');
+app.use('/me', profileRouter);
+
 require('./routes/users')(app);
 
 // catch 404 and forward to error handler

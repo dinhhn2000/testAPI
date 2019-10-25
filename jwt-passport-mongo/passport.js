@@ -22,11 +22,12 @@ module.exports = passport => {
             User.findById(payload.id)
                 .then(user => {
                     if (user) {
-                        return done(null, {
+                        let userInfo = {
                             id: user.id,
                             name: user.name,
-                            email: user.email,
-                        });
+                            email: user.emailAddress,
+                        };
+                        return done(null, userInfo);
                     }
                     return done(null, false);
                 })
