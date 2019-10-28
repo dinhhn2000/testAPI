@@ -9,9 +9,6 @@ const passport = require('passport');
 //reads in configuration from a .env file
 require('dotenv').config();
 require('./utils/db');
-
-//imports our configuration file which holds our verification callbacks 
-// and things like the secret for signing.
 require('./passport')(passport);
 
 var app = express();
@@ -25,7 +22,7 @@ const cors = require('cors');
 app.use(cors());
 
 //sets the required variables from Environment Variables.
-const port = process.env.PORT || 3000;
+// const port = process.env.PORT || 3000;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -34,8 +31,8 @@ app.use(logger('dev'));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const indexRouter = require('./routes/index');
-app.use('/index', passport.authenticate('jwt', { session: false }), indexRouter);
+const indexRouter = require('./routes/auth');
+app.use('/auth', passport.authenticate('jwt', { session: false }), indexRouter);
 
 const profileRouter = require('./routes/profile');
 app.use('/me', profileRouter);
