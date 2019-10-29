@@ -12,14 +12,16 @@ require('./utils/db');
 require('./passport')(passport);
 
 var app = express();
+
+//CORS middleware
+const cors = require('cors');
+app.use(cors());
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-//CORS middleware
-const cors = require('cors');
-app.use(cors());
 
 //sets the required variables from Environment Variables.
 // const port = process.env.PORT || 3000;

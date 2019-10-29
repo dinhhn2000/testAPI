@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 
 mongoose.set('useCreateIndex', true);
 //fixes an issue with a depricated default in Mongoose.js
-mongoose.connect(`mongodb+srv://dinhhn2000:${dbPassword}@clusterdemo-gevuw.mongodb.net/test?retryWrites=true&w=majority`, {
+mongoose.connect(`mongodb+srv://dinhhn2000:${dbPassword}@clustertest-gevuw.gcp.mongodb.net/test?retryWrites=true&w=majority`, {
     useUnifiedTopology: true,
     useNewUrlParser: true
 })
