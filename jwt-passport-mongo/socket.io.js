@@ -1,15 +1,10 @@
-const http = require('http')
 const socketIO = require('socket.io')
 const { Player, Players } = require('./utils/Players')
-const { Room, GameRooms } = require('./utils/GameRooms')
+const { GameRooms } = require('./utils/GameRooms')
 
-// our localhost port
-const port = 4001
-
-module.exports = (app) => {
+module.exports.listen = (server) => {
     // Create socket
-    const server = http.createServer(app);
-    const io = socketIO(server);
+    const io = socketIO.listen(server);
     const playerList = new Players();   // Player who is finding match
     const roomList = new GameRooms();
 
@@ -198,7 +193,4 @@ module.exports = (app) => {
             }, 5000);
         })
     })
-
-
-    server.listen(port, () => console.log(`Listening on port ${port}`))
 }

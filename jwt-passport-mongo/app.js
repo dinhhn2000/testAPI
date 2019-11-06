@@ -22,7 +22,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-require('./socket.io')(app)
+const http = require('http');
+let server = http.createServer(app);
+require('./socket.io').listen(server);
 
 //sets the required variables from Environment Variables.
 // const port = process.env.PORT || 3000;
@@ -58,4 +60,7 @@ app.use(function (err, req, res, next) {
   res.render('error');
 });
 
-module.exports = app;
+var port = (process.env.PORT || '4000');
+server.listen(port, () => {
+  console.log(`Server is up on port ${port}`);
+})
