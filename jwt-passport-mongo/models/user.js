@@ -6,6 +6,10 @@ const UserSchema = new Schema({
         enum: ['local', 'google', 'facebook'],
         required: true
     },
+    imageUrl: {
+        type: String,
+        required: true,
+    },
     local: {
         name: String,
         emailAddress: {

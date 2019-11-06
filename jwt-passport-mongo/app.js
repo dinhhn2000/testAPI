@@ -22,6 +22,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
 app.use(passport.session());
 
+require('./socket.io')(app)
 
 //sets the required variables from Environment Variables.
 // const port = process.env.PORT || 3000;
@@ -31,7 +32,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 app.use(logger('dev'));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 const indexRouter = require('./routes/auth');
 app.use('/auth', passport.authenticate('jwt', { session: false }), indexRouter);

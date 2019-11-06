@@ -29,7 +29,8 @@ module.exports = (app) => {
               name: req.body.name,
               emailAddress: req.body.email,
               password: req.body.password,
-            }
+            },
+            imageUrl: 'public/images/default_user.png',
           });
           bcrypt.genSalt(10, (err, salt) => {
             if (err) throw err;
@@ -68,7 +69,8 @@ module.exports = (app) => {
               if (isMatch) {
                 const payload = {
                   id: user._id,
-                  name: user.local.name
+                  name: user.local.name,
+                  method: 'local'
                 };
                 jwt.sign(payload, secret, { expiresIn: '1d' },
                   (err, token) => {
@@ -80,7 +82,8 @@ module.exports = (app) => {
                     res.status(200).json({
                       success: true,
                       token: `Bearer ${token}`,
-                      name: payload.name
+                      name: payload.name,
+                      userId: user._id,
                     });
                   });
               } else {
@@ -102,13 +105,14 @@ module.exports = (app) => {
     // For Google account
     if (req.body.method === "google") {
       console.log("Google sign in");
-
-      User.findOne({ "google.email": email })
+      
+      User.findOne({ "google.id": req.body.id })
         .then(user => {
           if (user) {
             const payload = {
               id: user._id,
-              name: user.google.name
+              name: user.google.name,
+              method: 'google'
             };
             jwt.sign(payload, secret, { expiresIn: '1d' },
               (err, token) => {
@@ -120,7 +124,8 @@ module.exports = (app) => {
                 return res.status(200).json({
                   success: true,
                   token: `Bearer ${token}`,
-                  name: payload.name
+                  name: payload.name,
+                  userId: user._id,
                 });
               });
           }
@@ -132,13 +137,15 @@ module.exports = (app) => {
                 id: req.body.id,
                 name: req.body.name,
                 email: req.body.email,
-              }
+              },
+              imageUrl: req.body.imageUrl,
             });
             newUser.save()
               .then(user => {
                 const payload = {
                   id: user._id,
-                  name: user.google.name
+                  name: user.google.name,
+                  method: 'google'
                 };
                 jwt.sign(payload, secret, { expiresIn: '1d' },
                   (err, token) => {
@@ -150,7 +157,8 @@ module.exports = (app) => {
                     res.status(200).json({
                       success: true,
                       token: `Bearer ${token}`,
-                      name: payload.name
+                      name: payload.name,
+                      userId: user._id,
                     });
                   });
               })
@@ -170,7 +178,8 @@ module.exports = (app) => {
     (req, res, next) => {
       const payload = {
         id: req.user._id,
-        name: req.user.name
+        name: req.user.name,
+        method: 'facebook'
       };
       jwt.sign(payload, secret, { expiresIn: '1d' },
         (err, token) => {
@@ -182,12 +191,13 @@ module.exports = (app) => {
           res.status(200).json({
             success: true,
             token: `Bearer ${token}`,
-            name: payload.name
+            name: payload.name,
+            userId: req.user._id,
           });
         });
     });
 
-  /* GET users listing. */
+
   app.get('/', function (req, res, next) {
     res.send('Welcome to my API');
   });
@@ -197,35 +207,35 @@ module.exports = (app) => {
 
 
   // Googe login route (WON'T BE USED) => The API problem still cannot fix
-  app.post('/login/googleOauth',
-    passport.authenticate('google', {
-      session: false,
-      scope: ['email', 'profile']
-    }),
-    (req, res, next) => {
-      const payload = {
-        id: req.user._id,
-        name: req.user.name
-      };
-      jwt.sign(payload, secret, { expiresIn: '1d' },
-        (err, token) => {
-          if (err) res.status(500)
-            .json({
-              error: "Error signing token",
-              raw: err
-            });
-          res.status(200).json({
-            success: true,
-            token: `Bearer ${token}`,
-            name: payload.name
-          });
-        });
-    });
+  // app.post('/login/googleOauth',
+  //   passport.authenticate('google', {
+  //     session: false,
+  //     scope: ['email', 'profile']
+  //   }),
+  //   (req, res, next) => {
+  //     const payload = {
+  //       id: req.user._id,
+  //       name: req.user.name
+  //     };
+  //     jwt.sign(payload, secret, { expiresIn: '1d' },
+  //       (err, token) => {
+  //         if (err) res.status(500)
+  //           .json({
+  //             error: "Error signing token",
+  //             raw: err
+  //           });
+  //         res.status(200).json({
+  //           success: true,
+  //           token: `Bearer ${token}`,
+  //           name: payload.name
+  //         });
+  //       });
+  //   });
 
-  app.get('/login/googleOauth/callback',
-    passport.authenticate('google', { failureRedirect: '/login' }),
-    function (req, res) {
-      res.redirect('/');
-    });
+  // app.get('/login/googleOauth/callback',
+  //   passport.authenticate('google', { failureRedirect: '/login' }),
+  //   function (req, res) {
+  //     res.redirect('/');
+  //   });
 
 }
